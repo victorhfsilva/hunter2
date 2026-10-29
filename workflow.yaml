@@ -1,0 +1,25 @@
+vars:
+  TOOLS_FOLDER: /opt
+  OUTPUT_FOLDER: /output/workflow
+  SCOPE_FOLDER: /opt/scope-scraper/data/scopes/
+
+parallel: false
+modules:
+
+    - name: dir_creation
+      cmds: 
+      - mkdir -p {{OUTPUT_FOLDER}} && mkdir -p {{OUTPUT_FOLDER}}/$(date +%Y-%m-%d)
+
+    - name: secret_hunter
+      cmds: 
+      - python3 {{TOOLS_FOLDER}}/secret-hunter/secret-hunter.py --domains-file {{SCOPE_FOLDER}}/all_scope_domains_new.txt --provider openrouter --api-key {{OPEN_ROUTER_KEY}} --depth 3 -o {{OUTPUT_FOLDER}}/$(date +%Y-%m-%d)/secret-hunter
+
+    - name: postman_hunter
+      cmds: 
+      - python3 {{TOOLS_FOLDER}}/postman-hunter/postman-hunter.py --domains-file {{SCOPE_FOLDER}}/all_scope_domains_new.txt --provider openrouter --api-key {{OPEN_ROUTER_KEY}}  --postman-api-key {{POSTMAN_KEY}} -o {{OUTPUT_FOLDER}}/$(date +%Y-%m-%d)/postman-hunter
+
+    - name: opencode_test
+      cmds:
+      - xargs -r -I{} opencode run --auto --command hunt -- "https://{}" "--out {{OUTPUT_FOLDER}}/$(date +%Y-%m-%d)/opencode/" < {{SCOPE_FOLDER}}/all_scope_domains_new.txt
+
+
