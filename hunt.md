@@ -10,6 +10,12 @@ vulnerabilidades de forma não destrutiva e entregar dois relatórios em markdow
 - **Alvo (`$1` / `$ARGUMENTS`)**: o domínio ou URL do alvo. **Obrigatório.**
   Ex.: `example.com`. Se vier uma URL completa, use-a como base.
 - Flags opcionais (aceite se presentes nos argumentos):
+  - `--scope URL` → URL da **página do programa de bug bounty** deste teste
+    (ex.: `https://hackerone.com/xxxx`, `https://bugcrowd.com/xxxx`). É
+    **contexto de escopo**, não o alvo a ser escaneado: use-a apenas para ler
+    política, ativos autorizados e itens fora de escopo. Não faça enumeração,
+    crawling nem testes nessa URL; ela não substitui o alvo. Se não puder ser
+    lida, registre no RECON e siga com o alvo.
   - `--recon-only` → para depois do RECON, sem testar vulnerabilidades.
   - `--register` → tenta criar conta no alvo com as contas de teste.
   - `--proxy URL` → use em todas as requisições (`--proxy` do curl /
@@ -37,6 +43,9 @@ Se o alvo não for informado, pare e peça o alvo. Não invente alvo.
    registre no relatório. Sem exfiltração de dados de terceiros.
 5. **Somente alvos autorizados.** Se o alvo não parecer um lab/bug bounty
    (ex.: domínio de terceiro sem escopo declarado), avise e peça confirmação.
+   Quando `--scope` for informado, trate-o como a fonte de verdade do escopo:
+   confirme que o alvo está coberto pelo programa antes de testar; se estiver
+   fora do escopo declarado, pare e peça confirmação.
 6. **Evidência acima de alegação.** Sem prova concreta na resposta HTTP, o
    achado não é "confirmed".
 
@@ -142,8 +151,9 @@ Leia, antes de testar, as skills correspondentes em
 Grave em `<out>/` (padrão `./hunter_out/<target>/`):
 
 ### `RECON.md`
-`# RECON — <base>` com: data UTC, nota de escopo (domínio único, sem enum DNS),
-Target (base, status homepage, registro), WAF/CDN (presente, vendor,
+`# RECON — <base>` com: data UTC, nota de escopo (domínio único, sem enum DNS,
+e `--scope`/programa de bug bounty quando informado), Target (base, status
+homepage, registro), WAF/CDN (presente, vendor,
 confiança, evidências), GraphQL (URLs, introspectable, tipos, query/mutation),
 API endpoints, JS bundles, caminhos vazados/interessantes, fingerprint de tech,
 segredos observados (truncados), superfícies de login/registro, notas para

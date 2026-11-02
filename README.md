@@ -94,9 +94,13 @@ target.io
 3. **postman_hunter** — roda o postman-hunter nos mesmos domínios (via Verboo),
    combinando o escopo com coleções do Postman, gravando em
    `<OUTPUT_FOLDER>/<data>/postman-hunter/`.
-4. **opencode_test** — para cada domínio do escopo, executa
-   `opencode run --auto --command hunt -- "https://<dominio>" --out <OUTPUT_FOLDER>/<data>/opencode/`,
-   fazendo recon + caça de vulnerabilidades por domínio conforme o prompt `hunt.md`.
+4. **subdomain_enum** — roda `subfinder` sobre o arquivo de escopo
+   (`-dL`), grava os subdomínios em `<OUTPUT_FOLDER>/<data>/subfinder/subdomains.txt`
+   e gera `all_targets.txt` com domínios do escopo + subdomínios, normalizados e
+   deduplicados.
+5. **opencode_test** — para cada alvo de `all_targets.txt` (domínios + subdomínios),
+   executa `opencode run --auto --command hunt -- "https://<alvo>" --out <OUTPUT_FOLDER>/<data>/opencode/`,
+   fazendo recon + caça de vulnerabilidades por alvo conforme o prompt `hunt.md`.
 
 ## Saídas
 
@@ -105,6 +109,9 @@ target.io
 └── 2026-10-29/
     ├── secret-hunter/
     ├── postman-hunter/
+    ├── subfinder/
+    │   ├── subdomains.txt
+    │   └── all_targets.txt
     └── opencode/
 ```
 
